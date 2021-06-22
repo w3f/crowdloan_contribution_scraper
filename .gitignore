@@ -1,0 +1,4 @@
+node_modules
+*.json
+*.csv
+src/userInput.json
