@@ -20,7 +20,7 @@ async function main () {
    
     obj = await addData(obj, API_key);
  
-    writeCSV(obj, 'output.csv');
+    writeCSV(obj, 'output_' + obj.endBlock + '.csv');
 }
   main().catch(console.error).finally(() => process.exit());
 
