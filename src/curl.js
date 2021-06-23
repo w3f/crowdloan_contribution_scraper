@@ -36,7 +36,8 @@ export async function addData(obj, API_key){
                 entries += 1;
             }
         }
-    } while (dataObject.data.contributes[counter_index - 1].block_num >= startBlock);
+        console.log(dataObject.data.contributes[counter_index - 1].block_num - startBlock + ' blocks left.');
+    } while (dataObject.data.contributes[counter_index - 1].block_num >= startBlock && counter_index == 100);
 
     return obj;  
 }

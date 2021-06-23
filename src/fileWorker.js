@@ -26,10 +26,10 @@ export function writeCSV(obj, name){
 
   function extractAsCSV(obj){
     const header = [
-        "block_number, fund_id, para_id, who, contributed, contributing, extrinsic_index, status, block_timestamp" 
+        "block_number,fund_id,para_id,who,contributed,contributing,extrinsic_index,status,block_timestamp" 
     ]; 
     
     const rows = obj.data.list
-        .map(entry => `${entry.block_num}, ${entry.fund_id}, ${entry.para_id}, ${entry.who}, ${entry.contributed}, ${entry.contributing}, ${entry.extrinsic_index}, ${entry.status}, ${entry.block_timestamp}`);
+        .map(entry => `${entry.block_num},${entry.fund_id},${entry.para_id},${entry.who},${entry.contributed},${entry.contributing},${entry.extrinsic_index},${entry.status},${entry.block_timestamp}`);
       return header.concat(rows).join("\n");
   }
