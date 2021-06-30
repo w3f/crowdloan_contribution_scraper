@@ -17,27 +17,24 @@ export async function addData(obj, API_key){
         round += 1;
         dataObject = await getDataObject(page, network, API_key);
 
-        counter_index = dataObject.data.contributes.length;
+        counter_index = dataObject.data.events.length;
 
         for(let i=0; i < counter_index; i++){
-            if(dataObject.data.contributes[i].block_num >= startBlock & dataObject.data.contributes[i].block_num <= endBlock){
+            if(dataObject.data.events[i].block_num >= startBlock & dataObject.data.events[i].block_num <= endBlock){
                 obj.data.list[entries] = {
-                    'block_num': dataObject.data.contributes[i].block_num,
-                    'fund_id': dataObject.data.contributes[i].fund_id,
-                    'para_id': dataObject.data.contributes[i].para_id,
-                    'who': dataObject.data.contributes[i].who,
-                    'contributed': dataObject.data.contributes[i].contributed,
-                    'contributing': dataObject.data.contributes[i].contributing,
-                    'extrinsic_index': dataObject.data.contributes[i].extrinsic_index,
-                    'status': dataObject.data.contributes[i].status,
-                    'block_timestamp':dataObject.data.contributes[i].block_timestamp,
+                    'block_num': dataObject.data.events[i].block_num,
+                    'para_id': _getParaId(dataObject.data.events[i].params),
+                    'value': _getValue(dataObject.data.events[i].params),
+                    'event_index': dataObject.data.events[i].event_index,
+                    'finalized': dataObject.data.events[i].finalized,
+                    'block_timestamp':dataObject.data.events[i].block_timestamp,
                 }
                 obj.data.contributionsFound += 1;
                 entries += 1;
             }
         }
-        console.log(dataObject.data.contributes[counter_index - 1].block_num - startBlock + ' blocks left.');
-    } while (dataObject.data.contributes[counter_index - 1].block_num >= startBlock && counter_index == 100);
+        console.log(dataObject.data.events[counter_index - 1].block_num - startBlock + ' blocks left.');
+    } while (dataObject.data.events[counter_index - 1].block_num >= startBlock && counter_index == 100);
 
     return obj;  
 }
@@ -50,9 +47,9 @@ async function getDataObject(page, network, API_key){
     var url;
     
     if(network == 'polkadot'){
-        url = 'https://polkadot.api.subscan.io/api/scan/parachain/contributes'
+        url = 'https://polkadot.api.subscan.io/api/scan/events'
     } else {
-        url = 'https://kusama.api.subscan.io/api/scan/parachain/contributes'
+        url = 'https://kusama.api.subscan.io/api/scan/events'
     }
 
     var options = {
@@ -62,6 +59,8 @@ async function getDataObject(page, network, API_key){
         data: JSON.stringify({
         'row': 100,
         'page': page,
+        'module': "crowdloan",
+        "call": "contributed",
         }),
     };
     
@@ -88,4 +87,32 @@ async function curlRequest(options){
         }
       });
     });
+}
+
+function _getValue(params){
+    let string_tmp = "";
+    var value;
+
+    let start = params.search("value\":\"[0-9][0-9][0-9][0-9][0-9][0-9][0-9]") + 8
+
+    while(parseInt(params[start]) >= 0){
+        string_tmp = string_tmp + params[start];
+        start++;
+    }
+    value = parseInt(string_tmp);
+return value;
+}
+
+function _getParaId(params){
+    let string_tmp = "";
+    var paraId;
+
+    let start = params.search("\"value\":[0-9][0-9][0-9][0-9]}") + 8
+
+    while(parseInt(params[start]) >= 0){
+        string_tmp = string_tmp + params[start];
+        start++;
+    }
+    paraId = parseInt(string_tmp);
+return paraId;
 }
