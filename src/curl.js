@@ -93,7 +93,7 @@ function _getValue(params){
     let string_tmp = "";
     var value;
 
-    let start = params.search("value\":\"[0-9][0-9][0-9][0-9][0-9][0-9][0-9]") + 8
+    let start = params.search('{"type":"Balance","value":"[0-9][0-9][0-9][0-9][0-9]') + 27
 
     while(parseInt(params[start]) >= 0){
         string_tmp = string_tmp + params[start];
