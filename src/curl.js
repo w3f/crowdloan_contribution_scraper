@@ -24,6 +24,7 @@ export async function addData(obj, API_key){
                 obj.data.list[entries] = {
                     'block_num': dataObject.data.events[i].block_num,
                     'para_id': _getParaId(dataObject.data.events[i].params),
+                    'account_id': _getAccountID(dataObject.data.events[i].params),
                     'value': _getValue(dataObject.data.events[i].params),
                     'event_index': dataObject.data.events[i].event_index,
                     'finalized': dataObject.data.events[i].finalized,
@@ -93,7 +94,7 @@ function _getValue(params){
     let string_tmp = "";
     var value;
 
-    let start = params.search('{"type":"Balance","value":"[0-9][0-9][0-9][0-9][0-9]') + 27
+    let start = params.search('{"type":"Balance","value":"') + 27
 
     while(parseInt(params[start]) >= 0){
         string_tmp = string_tmp + params[start];
@@ -107,7 +108,7 @@ function _getParaId(params){
     let string_tmp = "";
     var paraId;
 
-    let start = params.search("\"value\":[0-9][0-9][0-9][0-9]}") + 8
+    let start = params.search('"type":"ParaId","value":') + 24
 
     while(parseInt(params[start]) >= 0){
         string_tmp = string_tmp + params[start];
@@ -115,4 +116,18 @@ function _getParaId(params){
     }
     paraId = parseInt(string_tmp);
 return paraId;
+}
+
+function _getAccountID(params){
+    let string_tmp = "";
+    var accountID;
+
+    let start = params.search('\"AccountId\",\"value\":\"') + 21
+    // Account ID has fixed length
+    for(let i = 0; i < 64; i++ ){
+        string_tmp = string_tmp + params[start];
+        start++;
+    }
+    accountID = string_tmp;
+return accountID;
 }
