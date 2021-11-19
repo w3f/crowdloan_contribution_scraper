@@ -75,6 +75,7 @@ async function getDataObject(page, network, API_key){
                 breakPoint += 1;
             }
     }
+    exportVariable(JSON.stringify(dataObject), "obj");
     return dataObject;
 }
 
@@ -90,44 +91,23 @@ async function curlRequest(options){
     });
 }
 
-function _getValue(params){
-    let string_tmp = "";
-    var value;
-
-    let start = params.search('{"type":"Balance","value":"') + 27
-
-    while(parseInt(params[start]) >= 0){
-        string_tmp = string_tmp + params[start];
-        start++;
-    }
-    value = parseInt(string_tmp);
-return value;
+function _getParaId(params){
+    var obj;
+    obj = JSON.parse(params);
+    let value = obj[1].value;
+   return value;
 }
 
-function _getParaId(params){
-    let string_tmp = "";
-    var paraId;
-
-    let start = params.search('"type":"ParaId","value":') + 24
-
-    while(parseInt(params[start]) >= 0){
-        string_tmp = string_tmp + params[start];
-        start++;
-    }
-    paraId = parseInt(string_tmp);
-return paraId;
+function _getValue(params){
+    var obj;
+    obj = JSON.parse(params);
+    let value = obj[2].value;
+   return value;
 }
 
 function _getAccountID(params){
-    let string_tmp = "";
-    var accountID;
-
-    let start = params.search('\"AccountId\",\"value\":\"') + 21
-    // Account ID has fixed length
-    for(let i = 0; i < 64; i++ ){
-        string_tmp = string_tmp + params[start];
-        start++;
-    }
-    accountID = string_tmp;
-return accountID;
+    var obj;
+    obj = JSON.parse(params);
+    let value = obj[0].value;
+   return value;
 }
